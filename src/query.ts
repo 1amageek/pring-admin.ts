@@ -6,8 +6,7 @@ import {
     DocumentSnapshot,
     QuerySnapshot,
     OrderByDirection,
-    WhereFilterOp,
-    GetOptions
+    WhereFilterOp
 } from './base'
 
 export class Query<Element extends typeof Base.Base> {
@@ -34,11 +33,7 @@ export class Query<Element extends typeof Base.Base> {
         error?: (error: Error) => void;
         complete?: () => void;
     }): () => void {
-        if (this.query instanceof FirebaseFirestore.Query) {
-            return this.query.onSnapshot(observer.next!, observer.error)
-        } else {
-            return this.query.onSnapshot(observer)
-        }
+        return this.query.onSnapshot(observer.next!, observer.error)
     }
 
     public where(fieldPath: string | FieldPath, opStr: WhereFilterOp, value: any): Query<Element> {
@@ -91,11 +86,7 @@ export class Query<Element extends typeof Base.Base> {
         return query
     }
 
-    public async get(options?: GetOptions) {
-        if (this.query instanceof FirebaseFirestore.Query) {
-            return await this.query.get()
-        } else {
-            return await this.query.get(options)
-        }
+    public async get() {
+        return await this.query.get()
     }
 }
