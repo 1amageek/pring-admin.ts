@@ -7,7 +7,7 @@ Firebase Cloud Firestore model framework for TypeScript. It supports both Web Cl
 
 ## Installation ⚙
 
-`npm install pring --save `
+`npm add pring-admin`
 
 ## Usage
 
@@ -45,81 +45,6 @@ required
     "node_modules"
   ]
 }
-```
-
-#### For WebClient
-
-```JSON
-{
-  "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "types": [
-      "node"
-    ],
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}
-```
-
-### webpack.config.js
-
-```js
-const alias = require('pring/webpack-alias')
-
-module.exports = {
-  // ...
-  resolve: {
-    alias
-  },
-}
-```
-
-### Initialize
-
-When using Pring in Vue please include it in `main.ts`.
-
-#### For Web
-
-``` typescript
-import * as Pring from "pring"
-import { config } from "./config"
-import firebase from "firebase"
-import "firebase/firestore";
-
-firebase.initializeApp(config)
-const app = firebase.app()
-
-Pring.initialize(app.firestore(), firebase.firestore.FieldValue.serverTimestamp())
 ```
 
 #### For Admin
