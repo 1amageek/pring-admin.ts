@@ -1,4 +1,3 @@
-import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as Base from './base'
 import { Option, DataSource } from './dataSource'
 import {

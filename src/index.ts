@@ -3,9 +3,11 @@ import { Firestore, FieldValue, Base, property } from './base'
 import { SubCollection } from './subCollection'
 import { NestedCollection } from './nestedCollection'
 import { ReferenceCollection } from './referenceCollection'
+import { Query } from './query'
+import { DataSource } from './dataSource'
 import { File } from './file'
 
-export { BatchType, Base, property, SubCollection, NestedCollection, ReferenceCollection, File }
+export { BatchType, Base, property, DataSource, Query, SubCollection, NestedCollection, ReferenceCollection, File }
 
 export let firestore: Firestore
 
