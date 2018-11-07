@@ -1,5 +1,5 @@
 import { BatchType } from './batch'
-import { Firestore, FieldValue, Base, property } from './base'
+import { Firestore, FieldValue, Base, property, DocumentData } from './base'
 import { SubCollection } from './subCollection'
 import { NestedCollection } from './nestedCollection'
 import { ReferenceCollection } from './referenceCollection'
@@ -7,7 +7,7 @@ import { Query } from './query'
 import { DataSource } from './dataSource'
 import { File } from './file'
 
-export { BatchType, Base, property, DataSource, Query, SubCollection, NestedCollection, ReferenceCollection, File }
+export { BatchType, Base, property, DataSource, Query, SubCollection, NestedCollection, ReferenceCollection, File, DocumentData }
 
 export let firestore: Firestore
 
