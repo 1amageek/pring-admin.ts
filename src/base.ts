@@ -114,7 +114,7 @@ export class Base implements Document {
     }
 
     public static query<T extends typeof Base>(this: T): DataSourceQuery.Query<T> {
-        return new DataSourceQuery.Query(this.getReference(), this)
+        return new DataSourceQuery.Query(this.getReference(), this.getReference(), this)
     }
 
     public static async get<T extends typeof Base>(this: T, id: string) {
@@ -356,6 +356,26 @@ export class Base implements Document {
         this.path = `${parent.path}/${this.id}`
         this.reference = firestore.doc(this.path)
 
+        const properties = this.getProperties()
+        for (const key of properties) {
+            const descriptor = Object.getOwnPropertyDescriptor(this, key)
+            if (descriptor) {
+                if (descriptor.get) {
+                    const value = descriptor.get()
+                    if (value) {
+                        if (isCollection(value)) {
+                            const collection: AnySubCollection = value as AnySubCollection
+                            collection.setParent(this, key)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public setReference(reference: CollectionReference) {
+        this.path = `${reference.path}/${this.id}`
+        this.reference = firestore.doc(this.path)
         const properties = this.getProperties()
         for (const key of properties) {
             const descriptor = Object.getOwnPropertyDescriptor(this, key)

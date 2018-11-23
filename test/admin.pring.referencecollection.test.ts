@@ -300,5 +300,27 @@ describe("SubCollection pack", () => {
                 }
             })
         })
+
+        describe("DataSource", async () => {
+            test("doc 1 reference", async () => {
+                try {
+                    const doc = await Document.get(doc0_id) as Document
+                    const docs = await doc.referenceCollection.query(Document).dataSource().get()
+                    expect(docs.length === 3).toBeTruthy()
+                    expect( docs.filter((value) => {
+                        return (value.id == doc1_id)
+                    })).toBeTruthy()
+                    docs.forEach((doc) => {
+                        expect(doc).not.toBeUndefined()
+                        expect(doc).not.toBeNull()
+                        expect(doc.createdAt).not.toBeNull()
+                        expect(doc.updatedAt).not.toBeNull()
+                    })
+                } catch (error) {
+                    expect(error).toBeNull()
+                    console.log(error)
+                }
+            })
+        })
     })
 })

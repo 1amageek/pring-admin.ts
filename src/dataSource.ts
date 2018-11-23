@@ -1,5 +1,6 @@
 import { Base, QuerySnapshot, DocumentData, DocumentChange, QueryDocumentSnapshot } from './base'
 import { Query } from './query'
+import { CollectionReference } from '@google-cloud/firestore';
 
 export class Option<Element extends typeof Base> {
 
@@ -106,7 +107,7 @@ export class DataSource<Element extends typeof Base> {
         const snapshot: QuerySnapshot = await this.query.get()
         const docs: QueryDocumentSnapshot[] = snapshot.docs
         const promises = docs.map(async doc => {
-            return await this._get(doc.id, doc.data())
+            return this._get(doc.id, doc.data())
         })
         return Promise.all(promises)
     }
@@ -177,6 +178,7 @@ export class DataSource<Element extends typeof Base> {
             return document
         } else {
             const document = new this._Element(id, data) as InstanceType<Element>
+            document.setReference(this.query.reference)
             return document
         }
     }
