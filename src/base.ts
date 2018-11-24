@@ -1,5 +1,6 @@
 import * as UUID from 'uuid'
 import * as FirebaseFirestore from '@google-cloud/firestore'
+import * as admin from 'firebase-admin'
 import "reflect-metadata"
 
 import { firestore, timestamp } from './index';
@@ -10,25 +11,25 @@ import { File } from './file'
 import { Batchable, BatchType } from './batch'
 import * as DataSourceQuery from './query'
 
-export type Firestore = FirebaseFirestore.Firestore
-export type FieldValue = FirebaseFirestore.FieldValue
-export type CollectionReference = FirebaseFirestore.CollectionReference
-export type DocumentReference = FirebaseFirestore.DocumentReference
-export type DocumentSnapshot = FirebaseFirestore.DocumentSnapshot
-export type Query = FirebaseFirestore.Query
-export type QuerySnapshot = FirebaseFirestore.QuerySnapshot
-export type WriteBatch = FirebaseFirestore.WriteBatch
+export type Firestore = admin.firestore.Firestore
+export type FieldValue = admin.firestore.FieldValue
+export type CollectionReference = admin.firestore.CollectionReference
+export type DocumentReference = admin.firestore.DocumentReference
+export type DocumentSnapshot = admin.firestore.DocumentSnapshot
+export type Query = admin.firestore.Query
+export type QuerySnapshot = admin.firestore.QuerySnapshot
+export type WriteBatch = admin.firestore.WriteBatch
 export type SetOptions = FirebaseFirestore.SetOptions
 export type UpdateData = FirebaseFirestore.UpdateData
-export type FieldPath = FirebaseFirestore.FieldPath
-export type Transaction = FirebaseFirestore.Transaction
-export type DocumentData = { createdAt: Date, updatedAt: Date } | { [key: string]: any } | FirebaseFirestore.DocumentData
+export type FieldPath = admin.firestore.FieldPath
+export type Transaction = admin.firestore.Transaction
+export type DocumentData = { createdAt: Date, updatedAt: Date } | { [key: string]: any } | admin.firestore.DocumentData
 export type DataOrSnapshot = DocumentData | DocumentSnapshot | DocumentSnapshot
 export type DateType = 'createdAt' | 'updatedAt'
 export type WhereFilterOp = FirebaseFirestore.WhereFilterOp
 export type OrderByDirection = FirebaseFirestore.OrderByDirection
 export type DocumentChange = FirebaseFirestore.DocumentChange
-export type QueryDocumentSnapshot = FirebaseFirestore.QueryDocumentSnapshot
+export type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
 
 const propertyMetadataKey = Symbol("property")
 
@@ -83,7 +84,7 @@ export function isFile(arg: any): boolean {
 }
 
 export function isTimestamp(arg: any): boolean {
-    return (arg instanceof FirebaseFirestore.Timestamp)
+    return (arg instanceof admin.firestore.Timestamp)
 }
 
 export const isUndefined = (value: any): boolean => {

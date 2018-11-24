@@ -1,6 +1,7 @@
 process.env.NODE_ENV = 'test';
 import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
+import * as FirebaseFirestore from '@google-cloud/firestore'
 
 var key = require("../key.json")
 const app = admin.initializeApp({
@@ -60,6 +61,10 @@ describe("Document property", () => {
 
         test("Dicionary type", () => {
             expect(doc.dictionary).toEqual(document.dictionary)
+        })
+
+        test("JSON type", () => {
+            expect(doc.json).toEqual(document.json)
         })
 
         test("Array type", () => {

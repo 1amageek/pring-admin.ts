@@ -15,10 +15,27 @@ export class Document extends Pring.Base {
     @property date: Date                              = new Date(100)
     @property geoPoint: admin.firestore.GeoPoint    = new admin.firestore.GeoPoint(0, 0)
     @property dictionary: object                      = {"key": "value"}  
+    @property json: {[key: string]: any}              = {json: { text: "text", number: 0}}
     @property string: String                          = "string"
     @property referenceCollection: Pring.ReferenceCollection<Document> = new Pring.ReferenceCollection(this)
     @property nestedCollection: Pring.NestedCollection<Document> = new Pring.NestedCollection(this)
 }
+
+// export class OptionalDocument extends Pring.Base {
+//     @property array: string[]
+//     @property set: object
+//     @property bool: boolean
+//     @property binary: Buffer
+//     @property file: Pring.File
+//     @property number: number
+//     @property date: Date
+//     @property geoPoint: admin.firestore.GeoPoint
+//     @property dictionary: object
+//     @property json: {[key: string]: any}
+//     @property string: String
+//     @property referenceCollection: Pring.ReferenceCollection<Document> = new Pring.ReferenceCollection(this)
+//     @property nestedCollection: Pring.NestedCollection<Document> = new Pring.NestedCollection(this)
+// }
 
 export class Item extends Pring.Base {
     @property name: string = "item"

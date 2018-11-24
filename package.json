@@ -43,7 +43,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@google-cloud/firestore": "^0.18.0",
+    "@google-cloud/firestore": "^0.19.0",
     "@types/jest": "^21.1.9",
     "@types/node": "^10.9.2",
     "firebase-admin": "^6.2.0",
@@ -53,7 +53,8 @@
     "typescript": "^3.1.1"
   },
   "peerDependencies": {
-    "@google-cloud/firestore": "^0.18.0"
+    "firebase-admin": "^6.2.0",
+    "@google-cloud/firestore": "^0.19.0"
   },
   "jest": {
     "transform": {
