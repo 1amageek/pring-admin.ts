@@ -105,8 +105,18 @@ describe("Document property", () => {
             await document.save()
             const doc = await Document.get(document.id) as Document
             doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file.additionalData = {
+                "text": "test",
+                "number": 0
+            }
             await doc.update()
-            expect(doc.file).toEqual(new Pring.File("update.jpg", "https://file", "image/png"))
+            expect(doc.file.value()).toEqual({
+                "additionalData": {"number": 0, "text": "test"}, "mimeType": "update.jpg", "name": "https://file", "url": "image/png"
+            })
+            expect(doc.file.additionalData).toEqual({
+                "text": "test",
+                "number": 0
+            })
             await doc.delete()
         })
     })
@@ -202,7 +212,7 @@ describe("Document property", () => {
             await doc.update()
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.set).toEqual({ "update": true })
-            // await newDoc.delete()
+            await newDoc.delete()
         })
 
         test("File type", async () => {
@@ -210,9 +220,20 @@ describe("Document property", () => {
             await document.save()
             const doc = await Document.get(document.id) as Document
             doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file.additionalData = {
+                "text": "test",
+                "number": 0
+            }
             await doc.update()
             const newDoc = await Document.get(document.id) as Document
-            expect(newDoc.file).toEqual(new Pring.File("update.jpg", "https://file", "image/png"))
+            
+            expect(doc.file.value()).toEqual({
+                "additionalData": {"number": 0, "text": "test"}, "mimeType": "update.jpg", "name": "https://file", "url": "image/png"
+            })
+            expect(doc.file.additionalData).toEqual({
+                "text": "test",
+                "number": 0
+            })
             await newDoc.delete()
         })
     })

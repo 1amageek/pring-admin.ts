@@ -41,6 +41,7 @@ export const property = <T extends Document>(target: T, propertyKey: string) => 
 
 export interface ValueProtocol {
     value(): any
+    updateValue(): any
     setValue(value: any, key: string): void
 }
 
@@ -48,6 +49,7 @@ export interface FileData {
     mimeType: string
     name: string
     url: string
+    additionalData?: { [key: string]: any }
 }
 
 export interface Document extends Batchable, ValueProtocol {
@@ -81,6 +83,17 @@ export function isCollection(arg: any): boolean {
 
 export function isFile(arg: any): boolean {
     return (arg instanceof File)
+}
+
+export function isFileType(arg: any): boolean {
+
+    if (arg instanceof Object) {
+        return ((arg as Object).hasOwnProperty('mimeType') &&
+        (arg as Object).hasOwnProperty('name') &&
+        (arg as Object).hasOwnProperty('url'))
+    } else {
+        return false
+    }
 }
 
 export function isTimestamp(arg: any): boolean {
@@ -170,7 +183,14 @@ export class Base implements Document {
         if (data) {
             for (const prop of properties) {
                 const key: (keyof DocumentData) = prop as (keyof DocumentData)
-                this._defineProperty(key, data[key])
+                const value = data[key]
+                if (isFileType(value)) {
+                    const file: File = new File()
+                    file.init(value)
+                    this._defineProperty(key, file)
+                } else {
+                    this._defineProperty(key, value)
+                } 
             }
             this.isSaved = true
         } else {
@@ -193,7 +213,13 @@ export class Base implements Document {
             const key: (keyof DocumentData) = prop as (keyof DocumentData)
             const value = data[key]
             if (!isUndefined(value)) {
-                this._defineProperty(key, value)
+                if (isFileType(value)) {
+                    const file: File = new File()
+                    file.init(value)
+                    this._defineProperty(key, file)
+                } else {
+                    this._defineProperty(key, value)
+                } 
             }
         }
         this._updateValues = {}
@@ -251,6 +277,28 @@ export class Base implements Document {
         return values
     }
 
+    public rawUpdateValue(): any {
+        const properties = this.getProperties()
+        const updateValues = this._updateValues as any
+        for (const key of properties) {
+            const descriptor = Object.getOwnPropertyDescriptor(this, key)
+            if (descriptor) {
+                if (descriptor.get) {
+                    const value = descriptor.get()
+                    if (!isUndefined(value)) {
+                        if (isFile(value)) {
+                            const file: File = value as File
+                            if (Object.keys(file).length) {
+                                updateValues[key] = file.value()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return updateValues
+    }
+
     public value(): DocumentData {
         const values: DocumentData = this.rawValue()
         if (this.isSaved) {
@@ -265,8 +313,11 @@ export class Base implements Document {
         return values
     }
 
-    public updateValue(): DocumentData {
-        return this._updateValues
+    public updateValue(): any {
+        const updateValue: any = this.rawUpdateValue()
+        const updatedAt: (keyof DocumentData) = "updatedAt"
+        updateValue[updatedAt] = timestamp
+        return updateValue
     }
 
     public pack(type: BatchType, batchID?: string, writeBatch?: WriteBatch): WriteBatch {
@@ -302,9 +353,7 @@ export class Base implements Document {
                 }
                 return _writeBatch
             case BatchType.update:
-                const updateValues: DocumentData = this._updateValues
-                const updatedAt: (keyof DocumentData) = "updatedAt"
-                updateValues[updatedAt] = timestamp
+                const updateValues: any = this.updateValue()
                 _writeBatch.update(reference, updateValues)
                 for (const key of properties) {
                     const descriptor = Object.getOwnPropertyDescriptor(this, key)
@@ -334,6 +383,7 @@ export class Base implements Document {
         this.batchID = batchID
         const properties = this.getProperties()
         this.isSaved = true
+        this._updateValues = {}
         for (const key of properties) {
             const descriptor = Object.getOwnPropertyDescriptor(this, key)
             if (descriptor) {
@@ -344,6 +394,10 @@ export class Base implements Document {
                             const collection: AnySubCollection = value as AnySubCollection
                             collection.setParent(this, key)
                             collection.batch(type, batchID)
+                        }
+                        if (isFile(value)) {
+                            const file: File = value as File
+                            file.resetUpdateValue()
                         }
                     }
                 }
