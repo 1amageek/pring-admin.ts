@@ -268,6 +268,15 @@ export class Base implements Document {
                         } else if (isFile(value)) {
                             const file: ValueProtocol = value as ValueProtocol
                             values[key] = file.value()
+                        } else if (value instanceof Date) {
+                            console.log(
+                                "******************** Warnings ********************\n" +
+                                "\n" +
+                                " pring-admin.ts is not support `Date` type.\n" +
+                                " Please migrate `Date` type to `Timestamp` type.\n" +
+                                "\n" +
+                                "**************************************************\n"
+                                )
                         } else {
                             values[key] = value
                         }
