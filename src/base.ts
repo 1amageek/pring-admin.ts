@@ -3,7 +3,7 @@ import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as admin from 'firebase-admin'
 import "reflect-metadata"
 
-import { firestore, timestamp } from './index';
+import { firestore} from './index';
 import { SubCollection } from './subCollection'
 import { NestedCollection } from './nestedCollection'
 import { ReferenceCollection } from './referenceCollection'
@@ -31,6 +31,8 @@ export type WhereFilterOp = FirebaseFirestore.WhereFilterOp
 export type OrderByDirection = FirebaseFirestore.OrderByDirection
 export type DocumentChange = FirebaseFirestore.DocumentChange
 export type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
+
+export const timestamp = admin.firestore.FieldValue.serverTimestamp()
 
 const propertyMetadataKey = Symbol("property")
 
