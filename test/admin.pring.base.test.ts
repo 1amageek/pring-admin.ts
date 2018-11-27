@@ -8,7 +8,7 @@ const app = admin.initializeApp({
     credential: admin.credential.cert(key)
 })
 
-Pring.initialize(app.firestore(), admin.firestore.FieldValue.serverTimestamp())
+Pring.initialize(app.firestore())
 
 import { Document } from './document'
 
@@ -19,8 +19,8 @@ describe("Document property", () => {
     var doc: Document
 
     beforeAll(async () => {
-        document.createdAt = new Date(100)
-        document.updatedAt = new Date(100)
+        document.createdAt = admin.firestore.Timestamp.fromDate(new Date(100))
+        document.updatedAt = admin.firestore.Timestamp.fromDate(new Date(100))
         await document.save()
         doc = await Document.get(document.id) as Document
     });
@@ -32,11 +32,11 @@ describe("Document property", () => {
         })
 
         test("createdAt", () => {
-            expect(doc.createdAt).toEqual(new Date(100))
+            expect(doc.createdAt).toEqual(admin.firestore.Timestamp.fromDate(new Date(100)))
         })
 
         test("updatedAt", () => {
-            expect(doc.updatedAt).toEqual(new Date(100))
+            expect(doc.updatedAt).toEqual(admin.firestore.Timestamp.fromDate(new Date(100)))
         })
 
         test("String type", () => {

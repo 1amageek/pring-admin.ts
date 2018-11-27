@@ -23,7 +23,8 @@ export type SetOptions = FirebaseFirestore.SetOptions
 export type UpdateData = FirebaseFirestore.UpdateData
 export type FieldPath = admin.firestore.FieldPath
 export type Transaction = admin.firestore.Transaction
-export type DocumentData = { createdAt: Date, updatedAt: Date } | { [key: string]: any } | admin.firestore.DocumentData
+export type Timestamp = admin.firestore.Timestamp
+export type DocumentData = { createdAt: Timestamp, updatedAt: Timestamp } | { [key: string]: any } | admin.firestore.DocumentData
 export type DataOrSnapshot = DocumentData | DocumentSnapshot | DocumentSnapshot
 export type DateType = 'createdAt' | 'updatedAt'
 export type WhereFilterOp = FirebaseFirestore.WhereFilterOp
@@ -59,8 +60,8 @@ export interface Document extends Batchable, ValueProtocol {
     path: string
     id: string
     reference: DocumentReference
-    createdAt: Date
-    updatedAt: Date
+    createdAt: Timestamp
+    updatedAt: Timestamp
     getVersion(): number
     getModelName(): string
     getPath(): string
@@ -156,9 +157,9 @@ export class Base implements Document {
 
     public id: string
 
-    public createdAt!: Date
+    public createdAt!: Timestamp
 
-    public updatedAt!: Date
+    public updatedAt!: Timestamp
 
     public isSaved: boolean = false
 
@@ -303,12 +304,12 @@ export class Base implements Document {
         const values: DocumentData = this.rawValue()
         if (this.isSaved) {
             const updatedAt: (keyof DocumentData) = "updatedAt"
-            values[updatedAt] = timestamp
+            values[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
         } else {
             const updatedAt: (keyof DocumentData) = "updatedAt"
             const createdAt: (keyof DocumentData) = "createdAt"
-            values[updatedAt] = this.updatedAt || timestamp
-            values[createdAt] = this.createdAt || timestamp
+            values[updatedAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
+            values[createdAt] = this.createdAt || admin.firestore.FieldValue.serverTimestamp()
         }
         return values
     }
@@ -316,7 +317,7 @@ export class Base implements Document {
     public updateValue(): any {
         const updateValue: any = this.rawUpdateValue()
         const updatedAt: (keyof DocumentData) = "updatedAt"
-        updateValue[updatedAt] = timestamp
+        updateValue[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
         return updateValue
     }
 
@@ -500,9 +501,6 @@ export class Base implements Document {
             enumerable: true,
             configurable: true,
             get: () => {
-                if (isTimestamp(_value)) {
-                    return _value.toDate()
-                }
                 return _value
             },
             set: (newValue) => {

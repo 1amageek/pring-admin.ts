@@ -7,8 +7,7 @@ import {
     DocumentSnapshot,
     QuerySnapshot,
     WriteBatch,
-    DocumentData,
-    DocumentReference,
+    DocumentData
 } from './base'
 
 export class ReferenceCollection<T extends Base> extends SubCollection<T> {

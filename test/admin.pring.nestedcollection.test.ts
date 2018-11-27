@@ -8,7 +8,7 @@ const app = admin.initializeApp({
     credential: admin.credential.cert(key)
 })
 
-Pring.initialize(app.firestore(), admin.firestore.FieldValue.serverTimestamp())
+Pring.initialize(app.firestore())
 
 import { Document } from './document'
 

@@ -8,7 +8,7 @@ const app = admin.initializeApp({
     credential: admin.credential.cert(key)
 })
 
-Pring.initialize(app.firestore(), admin.firestore.FieldValue.serverTimestamp())
+Pring.initialize(app.firestore())
 
 import { Document } from './document'
 
@@ -27,7 +27,7 @@ describe("Document property", () => {
             doc.string = "update"
             await doc.update()
             expect(doc.string).toEqual("update")
-            await doc.delete()
+            // await doc.delete()
         })
 
         test("Number type", async () => {
@@ -54,9 +54,9 @@ describe("Document property", () => {
             const document = new Document()
             await document.save()
             const doc = await Document.get(document.id) as Document
-            doc.date = new Date(1000)
+            doc.date = admin.firestore.Timestamp.fromDate(new Date(1000))
             await doc.update()
-            expect(doc.date).toEqual(new Date(1000))
+            expect(doc.date).toEqual(admin.firestore.Timestamp.fromDate(new Date(1000)))
             await doc.delete()
         })
 
@@ -164,10 +164,10 @@ describe("Document property", () => {
             const document = new Document()
             await document.save()
             const doc = await Document.get(document.id) as Document
-            doc.date = new Date(1000)
+            doc.date = admin.firestore.Timestamp.fromDate(new Date(1000))
             await doc.update()
             const newDoc = await Document.get(document.id) as Document
-            expect(newDoc.date).toEqual(new Date(1000))
+            expect(newDoc.date).toEqual(admin.firestore.Timestamp.fromDate(new Date(1000)))
             await newDoc.delete()
         })
 
