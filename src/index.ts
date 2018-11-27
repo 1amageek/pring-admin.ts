@@ -1,5 +1,4 @@
 import { BatchType } from './batch'
-import * as admin from 'firebase-admin'
 import { Firestore, Base, property, DocumentData, FieldValue, Timestamp, Transaction } from './base'
 import { SubCollection } from './subCollection'
 import { NestedCollection } from './nestedCollection'
