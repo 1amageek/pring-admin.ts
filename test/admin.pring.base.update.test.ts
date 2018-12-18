@@ -11,14 +11,11 @@ const app = admin.initializeApp({
 Pring.initialize(app.firestore())
 
 import { Document } from './document'
+import { FieldValue } from '@google-cloud/firestore';
 
 describe("Document property", () => {
 
     describe("properties before get", async () => {
-
-        test("batch", () => {
-            expect(Pring.firestore.batch() instanceof admin.firestore.WriteBatch).toBeTruthy()
-        })
 
         test("String type", async () => {
             const document = new Document()
@@ -27,7 +24,7 @@ describe("Document property", () => {
             doc.string = "update"
             await doc.update()
             expect(doc.string).toEqual("update")
-            // await doc.delete()
+            await doc.delete()
         })
 
         test("Number type", async () => {
@@ -78,7 +75,7 @@ describe("Document property", () => {
             await doc.update()
             expect(doc.dictionary).toEqual({ "key": "update" })
             await doc.delete()
-        })
+        }, 10000)
 
         test("Array type", async () => {
             const document = new Document()
@@ -88,7 +85,7 @@ describe("Document property", () => {
             await doc.update()
             expect(doc.array).toEqual(["update"])
             await doc.delete()
-        })
+        }, 10000)
 
         test("Set type", async () => {
             const document = new Document()
@@ -98,7 +95,7 @@ describe("Document property", () => {
             await doc.update()
             expect(doc.set).toEqual({ "update": true })
             await doc.delete()
-        })
+        }, 10000)
 
         test("File type", async () => {
             const document = new Document()
@@ -118,14 +115,10 @@ describe("Document property", () => {
                 "number": 0
             })
             await doc.delete()
-        })
+        }, 10000)
     })
 
     describe("properties after get", async () => {
-
-        test("batch", () => {
-            expect(Pring.firestore.batch() instanceof admin.firestore.WriteBatch).toBeTruthy()
-        })
 
         test("String type", async () => {
             const document = new Document()
@@ -136,7 +129,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.string).toEqual("update")
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Number type", async () => {
             const document = new Document()
@@ -147,7 +140,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.number).toEqual(100)
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Boolean type", async () => {
             const document = new Document()
@@ -158,7 +151,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.bool).toEqual(false)
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Date type", async () => {
             const document = new Document()
@@ -169,7 +162,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.date).toEqual(admin.firestore.Timestamp.fromDate(new Date(1000)))
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("GeoPoint type", async () => {
             const document = new Document()
@@ -180,7 +173,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.geoPoint).toEqual(new admin.firestore.GeoPoint(10, 10))
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Dicionary type", async () => {
             const document = new Document()
@@ -191,7 +184,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.dictionary).toEqual({ "key": "update" })
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Array type", async () => {
             const document = new Document()
@@ -202,18 +195,18 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.array).toEqual(["update"])
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("Set type", async () => {
             const document = new Document()
             await document.save()
             const doc = await Document.get(document.id) as Document
-            doc.set = { "update": true }
+            doc.set = { "update": true, "set": FieldValue.delete() }
             await doc.update()
             const newDoc = await Document.get(document.id) as Document
             expect(newDoc.set).toEqual({ "update": true })
             await newDoc.delete()
-        })
+        }, 10000)
 
         test("File type", async () => {
             const document = new Document()
@@ -235,6 +228,6 @@ describe("Document property", () => {
                 "number": 0
             })
             await newDoc.delete()
-        })
+        }, 10000)
     })
 })

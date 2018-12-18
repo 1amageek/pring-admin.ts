@@ -3,7 +3,8 @@ import * as FirebaseFirestore from '@google-cloud/firestore'
 import * as admin from 'firebase-admin'
 import "reflect-metadata"
 
-import { firestore} from './index';
+import { firestore } from './index'
+import { List } from './list'
 import { SubCollection } from './subCollection'
 import { NestedCollection } from './nestedCollection'
 import { ReferenceCollection } from './referenceCollection'
@@ -78,6 +79,19 @@ export interface AnySubCollection extends Batchable {
     setParent<T extends Base>(parent: T, key: string): void
 }
 
+export interface AnyList {
+    key: string
+    value(): { [key: string]: any }
+    updateValue(): { [key: string]: any }
+    setValue(value: { [key: string]: any }): void
+    setParent<T extends Base>(parent: T, key: string): void
+    clean(): void
+}
+
+export function isList(arg: any): boolean {
+    return (arg instanceof List)
+}
+
 export function isCollection(arg: any): boolean {
     return (arg instanceof SubCollection) ||
         (arg instanceof NestedCollection) ||
@@ -92,8 +106,8 @@ export function isFileType(arg: any): boolean {
 
     if (arg instanceof Object) {
         return ((arg as Object).hasOwnProperty('mimeType') &&
-        (arg as Object).hasOwnProperty('name') &&
-        (arg as Object).hasOwnProperty('url'))
+            (arg as Object).hasOwnProperty('name') &&
+            (arg as Object).hasOwnProperty('url'))
     } else {
         return false
     }
@@ -193,7 +207,7 @@ export class Base implements Document {
                     this._defineProperty(key, file)
                 } else {
                     this._defineProperty(key, value)
-                } 
+                }
             }
             this.isSaved = true
         } else {
@@ -206,10 +220,12 @@ export class Base implements Document {
 
     public setData(data: DocumentData) {
         if (data.createdAt) {
-            this._defineProperty('createdAt', data.createdAt)
+            this._defineProperty('createdAt')
+            this._prop['createdAt'] = data.createdAt
         }
         if (data.updatedAt) {
-            this._defineProperty('updatedAt', data.updatedAt)
+            this._defineProperty('updatedAt')
+            this._prop['updatedAt'] = data.updatedAt
         }
         const properties: string[] = this.getProperties()
         for (const prop of properties) {
@@ -221,8 +237,14 @@ export class Base implements Document {
                     file.init(value)
                     this._defineProperty(key, file)
                 } else {
-                    this._defineProperty(key, value)
-                } 
+                    const prop = this._prop[key]
+                    if (isList(prop)) {
+                        const list = prop as AnyList
+                        list.setValue(value)
+                    } else {
+                        this._prop[key] = value
+                    }
+                }
             }
         }
         this._updateValues = {}
@@ -267,6 +289,9 @@ export class Base implements Document {
                     if (!isUndefined(value)) {
                         if (isCollection(value)) {
                             // Nothing
+                        } else if (isList(value)) {
+                            const list: AnyList = value as AnyList
+                            values[key] = value.value()
                         } else if (isFile(value)) {
                             const file: ValueProtocol = value as ValueProtocol
                             values[key] = file.value()
@@ -278,7 +303,7 @@ export class Base implements Document {
                                 " Please migrate `Date` type to `Timestamp` type.\n" +
                                 "\n" +
                                 "**************************************************\n"
-                                )
+                            )
                         } else {
                             values[key] = value
                         }
@@ -298,7 +323,12 @@ export class Base implements Document {
                 if (descriptor.get) {
                     const value = descriptor.get()
                     if (!isUndefined(value)) {
-                        if (isFile(value)) {
+                        if (isList(value)) {
+                            const updateValue = value.updateValue()
+                            if (Object.keys(updateValue).length > 0) {
+                                updateValues[key] = updateValue
+                            }
+                        } else if (isFile(value)) {
                             const file: File = value as File
                             if (Object.keys(file).length) {
                                 updateValues[key] = file.value()
@@ -366,7 +396,7 @@ export class Base implements Document {
                 return _writeBatch
             case BatchType.update:
                 const updateValues: any = this.updateValue()
-                _writeBatch.update(reference, updateValues)
+                _writeBatch.set(reference, updateValues, { merge: true })
                 for (const key of properties) {
                     const descriptor = Object.getOwnPropertyDescriptor(this, key)
                     if (descriptor) {
@@ -410,6 +440,10 @@ export class Base implements Document {
                         if (isFile(value)) {
                             const file: File = value as File
                             file.resetUpdateValue()
+                        }
+                        if (isList(value)) {
+                            const list: AnyList = value as AnyList
+                            list.clean()
                         }
                     }
                 }
@@ -506,25 +540,29 @@ export class Base implements Document {
         }
     }
 
+    private _prop: { [key: string]: any } = {}
+
     private _defineProperty<T extends keyof ThisType<this>>(key: T | DateType, value?: any) {
-        let _value: any = value
         const descriptor: PropertyDescriptor = {
             enumerable: true,
             configurable: true,
             get: () => {
-                return _value
+                return this._prop[key]
             },
             set: (newValue) => {
-                _value = newValue
                 if (isCollection(newValue)) {
                     const collection: AnySubCollection = newValue as AnySubCollection
                     collection.setParent(this, key)
+                } else if (isList(newValue)) {
+                    const list: AnyList = newValue as AnyList
+                    list.setParent(this, key)
                 } else if (isFile(newValue)) {
                     const file: ValueProtocol = newValue as ValueProtocol
                     this._updateValues[key] = file.value()
                 } else {
                     this._updateValues[key] = newValue
                 }
+                this._prop[key] = newValue
             }
         }
         Object.defineProperty(this, key, descriptor)

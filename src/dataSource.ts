@@ -1,6 +1,5 @@
 import { Base, QuerySnapshot, DocumentData, DocumentChange, QueryDocumentSnapshot } from './base'
 import { Query } from './query'
-import { CollectionReference } from '@google-cloud/firestore';
 
 export class Option<Element extends typeof Base> {
 
@@ -35,7 +34,7 @@ export class CollectionChange {
 
 export class DataSource<Element extends typeof Base> {
 
-    [index: number]: InstanceType<Element>
+    [index: number]: Element
 
     public query: Query<Element>
 
