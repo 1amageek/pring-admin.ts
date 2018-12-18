@@ -1,7 +1,6 @@
 process.env.NODE_ENV = 'test';
 import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
-import { PathLike } from 'fs';
 
 const property = Pring.property
 
