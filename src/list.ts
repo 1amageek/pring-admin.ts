@@ -1,18 +1,9 @@
 import { } from "reflect-metadata"
-import { BatchType } from './batch'
-import { firestore } from './index'
 import {
     Base,
-    timestamp,
-    AnyList,
-    CollectionReference,
-    DocumentSnapshot,
-    QuerySnapshot,
-    WriteBatch,
-    Transaction
+    AnyList
 } from './base'
-import * as DataSourceQuery from './query'
-import { FieldValue } from "@google-cloud/firestore";
+import { FieldValue } from "@google-cloud/firestore"
 
 export class List<Element extends Base> implements AnyList {
 
@@ -86,6 +77,14 @@ export class List<Element extends Base> implements AnyList {
 
     public objectOf(key: string): Element {
         return this._storage[key]
+    }
+
+    public objects(): Element[] {
+        const objects: Element[] = []
+        for (const id in this._storage) {
+            objects.push(this._storage[id])
+        }
+        return objects
     }
 
     public clean() {
