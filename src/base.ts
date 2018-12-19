@@ -190,6 +190,10 @@ export class Base implements Document {
         this.version = this.getVersion()
         this.modelName = this.getModelName()
 
+        if (!firestore) {
+            throw Error("[Pring] Pring is not initialized.")
+        }
+
         // Set reference
         this.id = id || firestore.collection(`version/${this.version}/${this.modelName}`).doc().id
         this.path = this.getPath()
