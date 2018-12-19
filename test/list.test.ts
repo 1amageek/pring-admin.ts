@@ -31,7 +31,6 @@ describe("List Test", () => {
             doc1.name = "doc1"
             doc0.list.append(doc1)
             expect(doc0.list.objectOf(doc1.id).name).toEqual("doc1")
-            console.log(doc0.value())
         })
 
         test("Save Update Delete", async () => {
