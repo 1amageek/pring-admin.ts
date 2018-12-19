@@ -1,4 +1,4 @@
-# pring.ts
+# Pring Admin
 
 Firebase Cloud Firestore model framework for TypeScript.
 
@@ -54,16 +54,17 @@ required
 import * as admin from 'firebase-admin'
 import * as Pring from 'pring'
 
-var key = require("../key.json")
 const app = admin.initializeApp()
 
-Pring.initialize(app.firestore(), admin.firestore.FieldValue.serverTimestamp())
+Pring.initialize(app.firestore())
 ```
 
 ### Scheme
 
-- Please add `@property` for property declaration.
-- SubCollection can not be optional. Please initialize here.
+- Use `@property` annotation for property declaration.
+
+> SubCollection can not be optional. Initialise it as show below:
+
 
 ``` typescript
 import * as Pring from "pring"
