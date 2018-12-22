@@ -95,6 +95,7 @@ export class SubCollection<T extends Base> implements AnySubCollection {
             const documents: T[] = docs.map((documentSnapshot) => {
                 const document = new type(documentSnapshot.id, documentSnapshot.data())
                 document.setData(documentSnapshot.data()!)
+                document.setReference(this.reference.doc(documentSnapshot.id))
                 return document
             })
             this.objects = documents
