@@ -90,16 +90,6 @@ export class ReferenceCollection<T extends Base> extends SubCollection<T> {
         }
     }
 
-    public async doc(id: string, type: { new(...args: any[]): T }) {
-        try {
-            const document = new type(id, {})
-            await document.fetch()
-            return document
-        } catch (error) {
-            throw error
-        }
-    }
-
     public async get(type: { new(...args: any[]): T }) {
         try {
             const snapshot: QuerySnapshot = await this.reference.get()
