@@ -478,9 +478,8 @@ export class Base implements Document {
         }
     }
 
-    public setReference(reference: CollectionReference) {
-        this.path = `${reference.path}/${this.id}`
-        this.reference = firestore.doc(this.path)
+    public setReference(reference: DocumentReference) {
+        this.reference = reference
         const properties = this.getProperties()
         for (const key of properties) {
             const descriptor = Object.getOwnPropertyDescriptor(this, key)

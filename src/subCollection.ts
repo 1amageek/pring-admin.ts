@@ -76,25 +76,10 @@ export class SubCollection<T extends Base> implements AnySubCollection {
         member.reference = member.getReference()
     }
 
-    public async doc(id: string, type: { new(...args: any[]): T }, transaction?: Transaction) {
-        try {
-            let snapshot: DocumentSnapshot
-            if (transaction) {
-                snapshot = await transaction.get(this.reference.doc(id))
-            } else {
-                snapshot = await this.reference.doc(id).get()
-            }
-            if (snapshot.exists) {
-                const document = new type(snapshot.id, {})
-                document.setData(snapshot.data()!)
-                document.setParent(this)
-                return document
-            } else {
-                return undefined
-            }
-        } catch (error) {
-            throw error
-        }
+    public doc(id: string, type: { new(...args: any[]): T }) {
+        const document = new type(id, {})
+        document.setReference(this.reference.doc(id))
+        return document
     }
 
     public async get(type: { new(...args: any[]): T }, transaction?: Transaction) {
