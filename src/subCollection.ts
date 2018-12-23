@@ -125,23 +125,14 @@ export class SubCollection<T extends Base> implements AnySubCollection {
             case BatchType.save:
                 this.forEach(document => {
                     const reference = self.reference.doc(document.id)
-                    _writeBatch.set(reference, document.value(), { merge: true })
+                    _writeBatch.set(reference, document.rawValue(), { merge: true })
+                    document.pack(BatchType.save, batchID, _writeBatch)
                 })
                 return _writeBatch
             case BatchType.update:
                 const insertions = this._insertions.filter(item => this._deletions.indexOf(item) < 0)
                 insertions.forEach(document => {
-                    if (document.isSaved) {
-                        const updateValue = document.updateValue()
-                        if (Object.keys(updateValue).length) {
-                            const reference = self.reference.doc(document.id)
-                            updateValue.updatedAt = timestamp
-                            _writeBatch.set(reference, updateValue, { merge: true })
-                        }
-                    } else {
-                        const reference = self.reference.doc(document.id)
-                        _writeBatch.set(reference, document.value(), { merge: true })
-                    }
+                    document.pack(BatchType.update, batchID, _writeBatch)
                 })
                 const deletions = this._deletions.filter(item => this._insertions.indexOf(item) < 0)
                 deletions.forEach(document => {

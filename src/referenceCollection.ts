@@ -40,12 +40,12 @@ export class ReferenceCollection<T extends Base> extends SubCollection<T> {
                 this.forEach(document => {
                     let value: DocumentData = {}
                     if (document.shouldBeReplicated()) {
-                        value = document.value()
+                        value = document.rawValue()
                     }
                     value.createdAt = timestamp
                     value.updatedAt = timestamp
                     if (!document.isSaved) {
-                        _writeBatch.set(document.getReference(), document.value(), {merge: true})
+                        _writeBatch.set(document.getReference(), document.rawValue(), {merge: true})
                     }
                     const reference = this.reference.doc(document.id)
                     _writeBatch.set(reference, value, { merge: true})
@@ -58,7 +58,7 @@ export class ReferenceCollection<T extends Base> extends SubCollection<T> {
                     let value: DocumentData = {}
                     if (document.isSaved) {
                         if (document.shouldBeReplicated()) {
-                            value = document.value()
+                            value = document.rawValue()
                         }
                         if (document.createdAt) {
                             value.createdAt = document.createdAt
@@ -66,11 +66,11 @@ export class ReferenceCollection<T extends Base> extends SubCollection<T> {
                         value.updatedAt = timestamp
                     } else {
                         if (document.shouldBeReplicated()) {
-                            value = document.value()
+                            value = document.rawValue()
                         }
                         value.createdAt = timestamp
                         value.updatedAt = timestamp
-                        _writeBatch.set(document.getReference(), document.value(), { merge: true})
+                        _writeBatch.set(document.getReference(), document.rawValue(), { merge: true})
                     }
                     const reference = this.reference.doc(document.id)
                     _writeBatch.set(reference, value, { merge: true})

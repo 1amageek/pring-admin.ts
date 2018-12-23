@@ -26,9 +26,10 @@ describe("Document property", () => {
     });
 
     describe("properties", async () => {
-
-        test("batch", () => {
-            expect(Pring.firestore.batch() instanceof admin.firestore.WriteBatch).toBeTruthy()
+        test("value", () => {
+            const keys = Object.keys(doc.value())
+            expect(keys.includes("createdAt")).toEqual(true)
+            expect(keys.includes("updatedAt")).toEqual(true)
         })
 
         test("createdAt", () => {

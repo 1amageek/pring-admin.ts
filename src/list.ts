@@ -33,7 +33,7 @@ export class List<Element extends Base> implements AnyList {
     public updateValue(): { [key: string]: any } {
         let value: { [key: string]: any } = this._updateValue
         for (const id in this._storage) {
-            const updateValue = this._storage[id].rawUpdateValue()
+            const updateValue = this._storage[id].updateValue()
             if (Object.keys(updateValue).length > 0) {
                 value[id] = updateValue
             }

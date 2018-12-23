@@ -69,7 +69,6 @@ export interface Document extends Batchable, ValueProtocol {
     getModelName(): string
     getPath(): string
     value(): any
-    rawValue(): any
 }
 
 export interface AnySubCollection extends Batchable {
@@ -295,7 +294,7 @@ export class Base implements Document {
                             // Nothing
                         } else if (isList(value)) {
                             const list: AnyList = value as AnyList
-                            values[key] = value.value()
+                            values[key] = list.value()
                         } else if (isFile(value)) {
                             const file: ValueProtocol = value as ValueProtocol
                             values[key] = file.value()
@@ -318,7 +317,37 @@ export class Base implements Document {
         return values
     }
 
-    public rawUpdateValue(): any {
+    public value(): any {
+        const values: DocumentData = this.rawValue()
+        if (this.isSaved) {
+            const updatedAt: (keyof DocumentData) = "updatedAt"
+            const createdAt: (keyof DocumentData) = "createdAt"
+            values[updatedAt] = this.updatedAt || FirebaseFirestore.Timestamp.fromDate(new Date())
+            values[createdAt] = this.createdAt || FirebaseFirestore.Timestamp.fromDate(new Date())
+        } else {
+            const updatedAt: (keyof DocumentData) = "updatedAt"
+            const createdAt: (keyof DocumentData) = "createdAt"
+            values[updatedAt] = this.updatedAt || FirebaseFirestore.Timestamp.fromDate(new Date())
+            values[createdAt] = this.createdAt || FirebaseFirestore.Timestamp.fromDate(new Date())
+        }
+        return values
+    }
+
+    private _value(): DocumentData {
+        const values: DocumentData = this.rawValue()
+        if (this.isSaved) {
+            const updatedAt: (keyof DocumentData) = "updatedAt"
+            values[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
+        } else {
+            const updatedAt: (keyof DocumentData) = "updatedAt"
+            const createdAt: (keyof DocumentData) = "createdAt"
+            values[updatedAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
+            values[createdAt] = this.createdAt || admin.firestore.FieldValue.serverTimestamp()
+        }
+        return values
+    }
+
+    public updateValue(): any {
         const properties = this.getProperties()
         const updateValues = this._updateValues as any
         for (const key of properties) {
@@ -345,22 +374,8 @@ export class Base implements Document {
         return updateValues
     }
 
-    public value(): DocumentData {
-        const values: DocumentData = this.rawValue()
-        if (this.isSaved) {
-            const updatedAt: (keyof DocumentData) = "updatedAt"
-            values[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
-        } else {
-            const updatedAt: (keyof DocumentData) = "updatedAt"
-            const createdAt: (keyof DocumentData) = "createdAt"
-            values[updatedAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
-            values[createdAt] = this.createdAt || admin.firestore.FieldValue.serverTimestamp()
-        }
-        return values
-    }
-
-    public updateValue(): any {
-        const updateValue: any = this.rawUpdateValue()
+    private _updateValue(): any {
+        const updateValue: any = this.updateValue()
         const updatedAt: (keyof DocumentData) = "updatedAt"
         updateValue[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
         return updateValue
@@ -382,7 +397,7 @@ export class Base implements Document {
         const properties = this.getProperties()
         switch (type) {
             case BatchType.save:
-                _writeBatch.set(reference, this.value(), { merge: true })
+                _writeBatch.set(reference, this._value(), { merge: true })
                 for (const key of properties) {
                     const descriptor = Object.getOwnPropertyDescriptor(this, key)
                     if (descriptor) {
@@ -399,8 +414,18 @@ export class Base implements Document {
                 }
                 return _writeBatch
             case BatchType.update:
-                const updateValues: any = this.updateValue()
-                _writeBatch.set(reference, updateValues, { merge: true })
+
+                if (this.isSaved) {
+                    const updateValue = this.updateValue()
+                    if (Object.keys(updateValue).length > 0) {
+                        const updateValue: any = this._updateValue()
+                        _writeBatch.set(reference, updateValue, { merge: true })
+                    }
+                } else {
+                    const reference = this.reference
+                    _writeBatch.set(reference, this._value(), { merge: true })
+                }
+
                 for (const key of properties) {
                     const descriptor = Object.getOwnPropertyDescriptor(this, key)
                     if (descriptor) {
