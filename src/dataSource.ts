@@ -105,8 +105,10 @@ export class DataSource<Element extends typeof Base> {
     public async next() {
         const snapshot: QuerySnapshot = await this.query.get()
         const documents: InstanceType<Element>[] = await this._operate(snapshot, false)
-        const lastSnapshot = snapshot.docs[snapshot.docs.length - 1]
-        this.query = this.query.startAfter(lastSnapshot)
+        if (snapshot.docs.length > 0) {
+            const lastSnapshot = snapshot.docs[snapshot.docs.length - 1]
+            this.query = this.query.startAfter(lastSnapshot)
+        }
         return documents
     }
 
@@ -121,9 +123,12 @@ export class DataSource<Element extends typeof Base> {
             const id: string = change.doc.id
             switch (change.type) {
                 case 'added': {
-                    const document = await this._get(change.doc.id, change.doc.data())
+                    const document: InstanceType<Element> = this._get(change.doc.id, change.doc.data())
                     documents.push(document)
                     documents.sort(this.option.sortBlock)
+                    if (this.query.isReference) {
+                        await document.fetch()
+                    }
                     this.documents.push(document)
                     this.documents = this.documents.sort(this.option.sortBlock)
                     if (!isFirst) {
@@ -139,7 +144,10 @@ export class DataSource<Element extends typeof Base> {
                     break
                 }
                 case 'modified': {
-                    const document: InstanceType<Element> = await this._get(change.doc.id, change.doc.data())
+                    const document: InstanceType<Element> = this._get(change.doc.id, change.doc.data())
+                    if (this.query.isReference) {
+                        await document.fetch()
+                    }
                     this.documents = this.documents.filter(doc => doc.id !== id)
                     this.documents.push(document)
                     this.documents = this.documents.sort(this.option.sortBlock)
@@ -174,13 +182,18 @@ export class DataSource<Element extends typeof Base> {
                 this.changeBlock(snapshot, collectionChange)
             }
         }
+        if (this.query.isReference) {
+            const promises = documents.map((doc) => {
+                return doc.fetch()
+            })
+            await Promise.all(promises)
+        }
         return documents
     }
 
-    private async _get(id: string, data: DocumentData) {
+    private _get(id: string, data: DocumentData) {
         if (this.query.isReference) {
             const document = new this._Element(id, {}) as InstanceType<Element>
-            await document.fetch()
             return document
         } else {
             const document = new this._Element(id, data) as InstanceType<Element>
