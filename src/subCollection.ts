@@ -55,7 +55,7 @@ export class SubCollection<T extends Base> implements AnySubCollection {
     }
 
     public insert(newMember: T) {
-        newMember.reference = this.reference.doc(newMember.id)
+        newMember.setParent(this)
         this.objects.push(newMember)
         if (this.isSaved()) {
             this._insertions.push(newMember)

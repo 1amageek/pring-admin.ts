@@ -102,7 +102,6 @@ export function isFile(arg: any): boolean {
 }
 
 export function isFileType(arg: any): boolean {
-
     if (arg instanceof Object) {
         return ((arg as Object).hasOwnProperty('mimeType') &&
             (arg as Object).hasOwnProperty('name') &&
@@ -212,6 +211,15 @@ export class Base implements Document {
                     this._defineProperty(key, value)
                 }
             }
+            const keys = Object.keys(data)
+            if (keys.includes("createdAt")) {
+                const value = data["createdAt"]
+                this._defineProperty("createdAt", value)
+            }
+            if (keys.includes("updatedAt")) {
+                const value = data["updatedAt"]
+                this._defineProperty("updatedAt", value)
+            }
             this.isSaved = true
         } else {
             for (const prop of properties) {
@@ -319,17 +327,10 @@ export class Base implements Document {
 
     public value(): any {
         const values: DocumentData = this.rawValue()
-        if (this.isSaved) {
-            const updatedAt: (keyof DocumentData) = "updatedAt"
-            const createdAt: (keyof DocumentData) = "createdAt"
-            values[updatedAt] = this.updatedAt || FirebaseFirestore.Timestamp.fromDate(new Date())
-            values[createdAt] = this.createdAt || FirebaseFirestore.Timestamp.fromDate(new Date())
-        } else {
-            const updatedAt: (keyof DocumentData) = "updatedAt"
-            const createdAt: (keyof DocumentData) = "createdAt"
-            values[updatedAt] = this.updatedAt || FirebaseFirestore.Timestamp.fromDate(new Date())
-            values[createdAt] = this.createdAt || FirebaseFirestore.Timestamp.fromDate(new Date())
-        }
+        const updatedAt: (keyof DocumentData) = "updatedAt"
+        const createdAt: (keyof DocumentData) = "createdAt"
+        values[updatedAt] = this.updatedAt || FirebaseFirestore.Timestamp.fromDate(new Date())
+        values[createdAt] = this.createdAt || FirebaseFirestore.Timestamp.fromDate(new Date())
         return values
     }
 
@@ -342,7 +343,7 @@ export class Base implements Document {
             const updatedAt: (keyof DocumentData) = "updatedAt"
             const createdAt: (keyof DocumentData) = "createdAt"
             values[updatedAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
-            values[createdAt] = this.createdAt || admin.firestore.FieldValue.serverTimestamp()
+            values[createdAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
         }
         return values
     }
@@ -481,26 +482,8 @@ export class Base implements Document {
     }
 
     public setParent<T extends Base>(parent: SubCollection<T>) {
-        // Set reference
-
         this.path = `${parent.path}/${this.id}`
-        this.reference = firestore.doc(this.path)
-
-        const properties = this.getProperties()
-        for (const key of properties) {
-            const descriptor = Object.getOwnPropertyDescriptor(this, key)
-            if (descriptor) {
-                if (descriptor.get) {
-                    const value = descriptor.get()
-                    if (value) {
-                        if (isCollection(value)) {
-                            const collection: AnySubCollection = value as AnySubCollection
-                            collection.setParent(this, key)
-                        }
-                    }
-                }
-            }
-        }
+        this.setReference(firestore.doc(this.path))
     }
 
     public setReference(reference: DocumentReference) {
