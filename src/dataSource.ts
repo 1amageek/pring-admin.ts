@@ -102,22 +102,28 @@ export class DataSource<Element extends typeof Base> {
         return this
     }
 
-    public async get() {
+    public async next() {
         const snapshot: QuerySnapshot = await this.query.get()
-        const docs: QueryDocumentSnapshot[] = snapshot.docs
-        const promises = docs.map(async doc => {
-            return this._get(doc.id, doc.data())
-        })
-        return Promise.all(promises)
+        const documents: InstanceType<Element>[] = await this._operate(snapshot, false)
+        const lastSnapshot = snapshot.docs[snapshot.docs.length - 1]
+        this.query = this.query.startAfter(lastSnapshot)
+        return documents
+    }
+
+    public async get() {
+        return this.next()
     }
 
     private async _operate(snapshot: QuerySnapshot, isFirst: boolean) {
+        const documents: InstanceType<Element>[] = []
         const changes: DocumentChange[] = snapshot.docChanges()
         changes.forEach(async change => {
             const id: string = change.doc.id
             switch (change.type) {
                 case 'added': {
-                    const document: InstanceType<Element> = await this._get(change.doc.id, change.doc.data())
+                    const document = await this._get(change.doc.id, change.doc.data())
+                    documents.push(document)
+                    documents.sort(this.option.sortBlock)
                     this.documents.push(document)
                     this.documents = this.documents.sort(this.option.sortBlock)
                     if (!isFirst) {
@@ -168,6 +174,7 @@ export class DataSource<Element extends typeof Base> {
                 this.changeBlock(snapshot, collectionChange)
             }
         }
+        return documents
     }
 
     private async _get(id: string, data: DocumentData) {
