@@ -546,6 +546,7 @@ export class Base implements Document {
                 this.setData(data)
                 this.isSaved = true
             }
+            return this
         } catch (error) {
             throw error
         }
