@@ -14,7 +14,7 @@ import {
 export class ReferenceCollection<T extends Base> extends SubCollection<T> {
 
     public doc(id: string, type: { new(...args: any[]): T }) {
-        const document = new type(id, {})
+        const document = new type(id)
         return document
     }
 

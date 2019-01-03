@@ -76,7 +76,7 @@ export class SubCollection<T extends Base> implements AnySubCollection {
     }
 
     public doc(id: string, type: { new(...args: any[]): T }) {
-        const document = new type(id, {})
+        const document = new type(id)
         document.setParent(this)
         return document
     }
