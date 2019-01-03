@@ -169,11 +169,15 @@ export class Base implements Document {
 
     public reference: DocumentReference
 
+    public snapshot?: DocumentSnapshot
+
     public id: string
 
     public createdAt!: Timestamp
 
     public updatedAt!: Timestamp
+
+    public isExists: boolean = false
 
     public isSaved: boolean = false
 
@@ -230,6 +234,7 @@ export class Base implements Document {
     }
 
     public setData(data: DocumentData) {
+        this.isExists = true
         if (data.createdAt) {
             this._defineProperty('createdAt')
             this._prop['createdAt'] = data.createdAt
@@ -541,6 +546,7 @@ export class Base implements Document {
             } else {
                 snapshot = await this.reference.get()
             }
+            this.snapshot = snapshot
             const data = snapshot.data()
             if (data) {
                 this.setData(data)
