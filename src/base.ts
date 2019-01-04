@@ -418,6 +418,9 @@ export class Base implements Document {
                         }
                     }
                 }
+                if (this.shouldBeReplicated()) {
+                    _writeBatch.set(this.getReference(), this._value(), { merge: true })
+                }
                 return _writeBatch
             case BatchType.update:
 
@@ -427,9 +430,15 @@ export class Base implements Document {
                         const updateValue: any = this._updateValue()
                         _writeBatch.set(reference, updateValue, { merge: true })
                     }
+                    if (this.shouldBeReplicated()) {
+                        _writeBatch.set(this.getReference(), updateValue, { merge: true })
+                    }
                 } else {
                     const reference = this.reference
                     _writeBatch.set(reference, this._value(), { merge: true })
+                    if (this.shouldBeReplicated()) {
+                        _writeBatch.set(this.getReference(), this._value(), { merge: true })
+                    }
                 }
 
                 for (const key of properties) {
@@ -449,6 +458,9 @@ export class Base implements Document {
                 return _writeBatch
             case BatchType.delete:
                 _writeBatch.delete(reference)
+                if (this.shouldBeReplicated()) {
+                    _writeBatch.delete(this.getReference())
+                }
                 return _writeBatch
         }
     }
