@@ -11,9 +11,9 @@ export class File implements ValueProtocol {
     public additionalData?: { [key: string]: any }
 
     public constructor(name?: string, url?: string, mimeType?: string, additionalData?: { [key: string]: any }) {
-        this._defineProperty("mimeType", name)
-        this._defineProperty("name", url)
-        this._defineProperty("url", mimeType)
+        this._defineProperty("mimeType", mimeType)
+        this._defineProperty("name", name)
+        this._defineProperty("url", url)
         this._defineProperty("additionalData", additionalData)
         this._updateValues = {}
     }
