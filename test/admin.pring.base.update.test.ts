@@ -108,7 +108,7 @@ describe("Document property", () => {
             }
             await doc.update()
             expect(doc.file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "mimeType": "update.jpg", "name": "https://file", "url": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
             })
             expect(doc.file.additionalData).toEqual({
                 "text": "test",
@@ -221,7 +221,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             
             expect(doc.file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "mimeType": "update.jpg", "name": "https://file", "url": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
             })
             expect(doc.file.additionalData).toEqual({
                 "text": "test",
