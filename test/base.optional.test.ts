@@ -1,7 +1,7 @@
+
 process.env.NODE_ENV = 'test';
 import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
-import * as FirebaseFirestore from '@google-cloud/firestore'
 
 var key = require("../key.json")
 const app = admin.initializeApp({
@@ -10,19 +10,38 @@ const app = admin.initializeApp({
 
 Pring.initialize(app.firestore())
 
-import { Document } from './document'
+import { OptionalDocument } from './document'
+import { exec } from 'child_process';
 
 
 describe("Document property", () => {
 
-    const document = new Document()
-    var doc: Document
-
+    const document: OptionalDocument = new OptionalDocument()
+    var doc: OptionalDocument
     beforeAll(async () => {
+
+        const files: Pring.File[] = []
+        const file0: Pring.File = new Pring.File("file.jpg", "https://file", "image/png")
+        const file1: Pring.File = new Pring.File("file.jpg", "https://file", "image/png")
+        files.push(file0)
+        files.push(file1)
+
+        document.array = ["array"]
+        document.set = { "set": true }
+        document.bool = true
+        document.binary = Buffer.from("data", 'utf8')
+        document.file = new Pring.File("file.jpg", "https://file", "image/png")
+        document.files = files
+        document.number = 9223372036854776000
+        document.date = admin.firestore.Timestamp.fromDate(new Date(100))
+        document.geoPoint = new admin.firestore.GeoPoint(0, 0)
+        document.dictionary = { "key": "value" }
+        document.json = { json: { text: "text", number: 0 } }
+        document.string = "string"
         document.createdAt = admin.firestore.Timestamp.fromDate(new Date(100))
         document.updatedAt = admin.firestore.Timestamp.fromDate(new Date(100))
         await document.save()
-        doc = await Document.get(document.id) as Document
+        doc = await OptionalDocument.get(document.id) as OptionalDocument
     });
 
     describe("properties", async () => {
@@ -77,16 +96,19 @@ describe("Document property", () => {
         })
 
         test("File type", () => {
-            expect(doc.file.value()).toEqual({
+            const file: Pring.File = doc.file as Pring.File
+            expect(file).not.toBeNull()
+            expect(file.value()).toEqual({
                 "name": "file.jpg",
                 "url": "https://file",
-                "mimeType": "image/png",
+                "mimeType": "image/png"
               })
         })
 
         test("Files type", () => {
-            expect(doc.files.length).toEqual(2)
-            doc.files.forEach(file => {
+            const files: Pring.File[] = doc.files as Pring.File[]
+            expect(files.length).toEqual(2)
+            files.forEach(file => {
                 expect(file.value()).toEqual({
                     "name": "file.jpg",
                     "url": "https://file",
@@ -98,7 +120,7 @@ describe("Document property", () => {
 
     describe("Documents that do not exist", async () => {
         test("not exist", async () => {
-            const doc = await Document.get("not")
+            const doc = await OptionalDocument.get("not")
             expect(doc).toBeUndefined()
         })
     })
@@ -108,7 +130,7 @@ describe("Document property", () => {
             try {
                 const document_id = doc.id
                 await doc.delete()
-                await Document.get(document_id)
+                await OptionalDocument.get(document_id)
             } catch (error) {
                 expect(error).not.toBeNull()
             }
