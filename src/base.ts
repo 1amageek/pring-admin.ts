@@ -1,6 +1,6 @@
 import * as UUID from 'uuid'
 import * as FirebaseFirestore from '@google-cloud/firestore'
-import * as admin from 'firebase-admin'
+import * as firebase from 'firebase-admin'
 import "reflect-metadata"
 
 import { firestore } from './index'
@@ -12,28 +12,28 @@ import { File } from './file'
 import { Batchable, BatchType } from './batch'
 import * as DataSourceQuery from './query'
 
-export type Firestore = admin.firestore.Firestore
-export type FieldValue = admin.firestore.FieldValue
-export type CollectionReference = admin.firestore.CollectionReference
-export type DocumentReference = admin.firestore.DocumentReference
-export type DocumentSnapshot = admin.firestore.DocumentSnapshot
-export type Query = admin.firestore.Query
-export type QuerySnapshot = admin.firestore.QuerySnapshot
-export type WriteBatch = admin.firestore.WriteBatch
+export type Firestore = firebase.firestore.Firestore
+export type FieldValue = firebase.firestore.FieldValue
+export type CollectionReference = firebase.firestore.CollectionReference
+export type DocumentReference = firebase.firestore.DocumentReference
+export type DocumentSnapshot = firebase.firestore.DocumentSnapshot
+export type Query = firebase.firestore.Query
+export type QuerySnapshot = firebase.firestore.QuerySnapshot
+export type WriteBatch = firebase.firestore.WriteBatch
 export type SetOptions = FirebaseFirestore.SetOptions
 export type UpdateData = FirebaseFirestore.UpdateData
-export type FieldPath = admin.firestore.FieldPath
-export type Transaction = admin.firestore.Transaction
-export type Timestamp = admin.firestore.Timestamp
-export type DocumentData = { createdAt: Timestamp, updatedAt: Timestamp } | { [key: string]: any } | admin.firestore.DocumentData
+export type FieldPath = firebase.firestore.FieldPath
+export type Transaction = firebase.firestore.Transaction
+export type Timestamp = firebase.firestore.Timestamp
+export type DocumentData = { createdAt: Timestamp, updatedAt: Timestamp } | { [key: string]: any } | firebase.firestore.DocumentData
 export type DataOrSnapshot = DocumentData | DocumentSnapshot | DocumentSnapshot
 export type DateType = 'createdAt' | 'updatedAt'
 export type WhereFilterOp = FirebaseFirestore.WhereFilterOp
 export type OrderByDirection = FirebaseFirestore.OrderByDirection
 export type DocumentChange = FirebaseFirestore.DocumentChange
-export type QueryDocumentSnapshot = admin.firestore.QueryDocumentSnapshot
+export type QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot
 
-export const timestamp = admin.firestore.FieldValue.serverTimestamp()
+export const timestamp = firebase.firestore.FieldValue.serverTimestamp()
 
 const propertyMetadataKey = Symbol("property")
 
@@ -122,7 +122,7 @@ export function isFileType(arg: any): boolean {
 }
 
 export function isTimestamp(arg: any): boolean {
-    return (arg instanceof admin.firestore.Timestamp)
+    return (arg instanceof firebase.firestore.Timestamp)
 }
 
 export const isUndefined = (value: any): boolean => {
@@ -363,12 +363,12 @@ export class Base implements Document {
         const values: DocumentData = this.rawValue()
         if (this.isSaved) {
             const updatedAt: (keyof DocumentData) = "updatedAt"
-            values[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
+            values[updatedAt] = firebase.firestore.FieldValue.serverTimestamp()
         } else {
             const updatedAt: (keyof DocumentData) = "updatedAt"
             const createdAt: (keyof DocumentData) = "createdAt"
-            values[updatedAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
-            values[createdAt] = this.updatedAt || admin.firestore.FieldValue.serverTimestamp()
+            values[updatedAt] = this.updatedAt || firebase.firestore.FieldValue.serverTimestamp()
+            values[createdAt] = this.updatedAt || firebase.firestore.FieldValue.serverTimestamp()
         }
         return values
     }
@@ -408,7 +408,7 @@ export class Base implements Document {
     private _updateValue(): any {
         const updateValue: any = this.updateValue()
         const updatedAt: (keyof DocumentData) = "updatedAt"
-        updateValue[updatedAt] = admin.firestore.FieldValue.serverTimestamp()
+        updateValue[updatedAt] = firebase.firestore.FieldValue.serverTimestamp()
         return updateValue
     }
 
