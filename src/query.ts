@@ -15,7 +15,7 @@ export class Query<Element extends typeof Base.Base> {
 
     public reference: CollectionReference
 
-    private query: Base.Query
+    public query: Base.Query
 
     private _Element: Element
 
