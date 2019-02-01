@@ -65,6 +65,10 @@ describe("Reference", async () => {
             await doc0.save()
         });
 
+        test("Nested Document Path before save", async () => {
+            expect(doc1.reference.path).toEqual(`version/1/doc0/${doc0.id}/nest/${doc1.id}`)
+        })
+
         test("Nested Document Path", async () => {
             const documents = await doc0.nest.query(Doc1).dataSource().get()
             const doc: Doc1 = documents[0]
