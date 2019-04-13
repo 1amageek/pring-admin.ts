@@ -43,8 +43,10 @@ export class File implements ValueProtocol {
         const value: FileData = {
             "name": this.name || "",
             "url": this.url || "",
-            "path": this.path || "",
             "mimeType": this.mimeType || ""
+        }
+        if (this.path) {
+            value.path = this.path
         }
         if (this.additionalData) {
             value.additionalData = this.additionalData
