@@ -6,11 +6,11 @@ export class File implements ValueProtocol {
 
     public name?: string
 
-    public url?: string
+    public url: string | null = null
 
-    public path?: string
+    public path: string | null = null
 
-    public additionalData?: { [key: string]: any }
+    public additionalData?: { [key: string]: any } 
 
     public constructor(name?: string, url?: string, path?: string, mimeType?: string, additionalData?: { [key: string]: any }) {
         this._defineProperty("mimeType", mimeType)
@@ -42,14 +42,12 @@ export class File implements ValueProtocol {
     public value(): any {
         const value: FileData = {
             "name": this.name || "",
-            "url": this.url || "",
+            "url": this.url,
+            "path": this.path,
             "mimeType": this.mimeType || ""
         }
-        if (this.path) {
-            value.path = this.path
-        }
         if (this.additionalData) {
-            value.additionalData = this.additionalData
+            value["additionalData"] = this.additionalData
         }
         return value
     }

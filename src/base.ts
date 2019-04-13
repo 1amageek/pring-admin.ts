@@ -52,8 +52,8 @@ export interface ValueProtocol {
 export interface FileData {
     mimeType: string
     name: string
-    url: string
-    path?: string
+    url: string | null
+    path: string | null
     additionalData?: { [key: string]: any }
 }
 

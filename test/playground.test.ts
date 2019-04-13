@@ -15,12 +15,19 @@ import { request } from "http";
 
 const main = async () => {
 
-	const document: Document = new Document()
-	document.string = "aaa"
-	await document.save()
+	// const document: Document = new Document()
+	// document.string = "aaa"
+	// await document.save()
 
-	const doc: Document = await new Document(document.id, {}).fetch()
-	console.log(doc.updateValue())
+	// const doc: Document = await new Document(document.id, {}).fetch()
+	// console.log(doc.updateValue())
+
+	await admin.firestore().doc("a/a").set(
+		{
+			"a": "sss",
+			"b": null
+		}
+	)
 }
 
 // Playground
