@@ -101,14 +101,14 @@ describe("Document property", () => {
             const document = new Document()
             await document.save()
             const doc = await Document.get(document.id) as Document
-            doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file = new Pring.File("update.jpg", "https://file", "version/1/", "image/png")
             doc.file.additionalData = {
                 "text": "test",
                 "number": 0
             }
             await doc.update()
             expect(doc.file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "path": "version/1/", "mimeType": "image/png"
             })
             expect(doc.file.additionalData).toEqual({
                 "text": "test",
@@ -212,7 +212,7 @@ describe("Document property", () => {
             const document = new Document()
             await document.save()
             const doc = await Document.get(document.id) as Document
-            doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file = new Pring.File("update.jpg", "https://file", "version/1/", "image/png")
             doc.file.additionalData = {
                 "text": "test",
                 "number": 0
@@ -221,7 +221,7 @@ describe("Document property", () => {
             const newDoc = await Document.get(document.id) as Document
             
             expect(doc.file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "path": "version/1/", "url": "https://file", "mimeType": "image/png"
             })
             expect(doc.file.additionalData).toEqual({
                 "text": "test",

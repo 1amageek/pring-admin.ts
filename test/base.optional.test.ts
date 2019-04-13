@@ -21,8 +21,8 @@ describe("Document property", () => {
     beforeAll(async () => {
 
         const files: Pring.File[] = []
-        const file0: Pring.File = new Pring.File("file.jpg", "https://file", "image/png")
-        const file1: Pring.File = new Pring.File("file.jpg", "https://file", "image/png")
+        const file0: Pring.File = new Pring.File("file.jpg", "https://file", "version/1/", "image/png")
+        const file1: Pring.File = new Pring.File("file.jpg", "https://file", "version/1/", "image/png")
         files.push(file0)
         files.push(file1)
 
@@ -30,7 +30,7 @@ describe("Document property", () => {
         document.set = { "set": true }
         document.bool = true
         document.binary = Buffer.from("data", 'utf8')
-        document.file = new Pring.File("file.jpg", "https://file", "image/png")
+        document.file = new Pring.File("file.jpg", "https://file", "version/1/", "image/png")
         document.files = files
         document.number = 9223372036854776000
         document.date = admin.firestore.Timestamp.fromDate(new Date(100))
@@ -101,6 +101,7 @@ describe("Document property", () => {
             expect(file.value()).toEqual({
                 "name": "file.jpg",
                 "url": "https://file",
+                "path": "version/1/",
                 "mimeType": "image/png"
               })
         })
@@ -112,6 +113,7 @@ describe("Document property", () => {
                 expect(file.value()).toEqual({
                     "name": "file.jpg",
                     "url": "https://file",
+                    "path": "version/1/",
                     "mimeType": "image/png",
                   })
             })

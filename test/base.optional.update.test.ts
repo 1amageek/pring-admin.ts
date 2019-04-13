@@ -101,14 +101,14 @@ describe("OptionalDocument property", () => {
             const document = new OptionalDocument()
             await document.save()
             const doc = await OptionalDocument.get(document.id) as OptionalDocument
-            doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file = new Pring.File("update.jpg", "https://file", "version/1/", "image/png")
             doc.file.additionalData = {
                 "text": "test",
                 "number": 0
             }
             await doc.update()
             expect(doc.file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "path": "version/1/", "mimeType": "image/png"
             })
             expect(doc.file.additionalData).toEqual({
                 "text": "test",
@@ -212,7 +212,7 @@ describe("OptionalDocument property", () => {
             const document = new OptionalDocument()
             await document.save()
             const doc = await OptionalDocument.get(document.id) as OptionalDocument
-            doc.file = new Pring.File("update.jpg", "https://file", "image/png")
+            doc.file = new Pring.File("update.jpg", "https://file", "/version/0/a", "image/png")
             doc.file.additionalData = {
                 "text": "test",
                 "number": 0
@@ -221,7 +221,7 @@ describe("OptionalDocument property", () => {
             const newDoc = await OptionalDocument.get(document.id) as OptionalDocument
             const file = newDoc.file as Pring.File
             expect(file.value()).toEqual({
-                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
+                "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "path": "/version/0/a", "mimeType": "image/png"
             })
             expect(file.additionalData).toEqual({
                 "text": "test",
@@ -235,12 +235,12 @@ describe("OptionalDocument property", () => {
             await document.save()
             const doc = await OptionalDocument.get(document.id) as OptionalDocument
             const files: Pring.File[] = []
-            const file0: Pring.File = new Pring.File("update.jpg", "https://file", "image/png")
+            const file0: Pring.File = new Pring.File("update.jpg", "https://file", "version/1/", "image/png")
             file0.additionalData = {
                 "text": "test",
                 "number": 0
             }
-            const file1: Pring.File = new Pring.File("update.jpg", "https://file", "image/png")
+            const file1: Pring.File = new Pring.File("update.jpg", "https://file", "version/1/", "image/png")
             file1.additionalData = {
                 "text": "test",
                 "number": 0
@@ -254,7 +254,7 @@ describe("OptionalDocument property", () => {
             expect(newFiles.length).toEqual(2)
             newFiles.forEach( file => {
                 expect(file.value()).toEqual({
-                    "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "mimeType": "image/png"
+                    "additionalData": {"number": 0, "text": "test"}, "name": "update.jpg", "url": "https://file", "path": "version/1/", "mimeType": "image/png"
                 })
                 expect(file.additionalData).toEqual({
                     "text": "test",

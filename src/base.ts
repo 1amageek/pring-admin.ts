@@ -53,6 +53,7 @@ export interface FileData {
     mimeType: string
     name: string
     url: string
+    path: string
     additionalData?: { [key: string]: any }
 }
 

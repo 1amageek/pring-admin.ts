@@ -11,8 +11,8 @@ export class Document extends Pring.Base {
     @property set: object = { "set": true }
     @property bool: boolean = true
     @property binary: Buffer = Buffer.from("data", 'utf8')
-    @property file: Pring.File = new Pring.File("file.jpg", "https://file", "image/png")
-    @property files: Pring.File[] = [new Pring.File("file.jpg", "https://file", "image/png"), new Pring.File("file.jpg", "https://file", "image/png")]
+    @property file: Pring.File = new Pring.File("file.jpg", "https://file" , "version/1/", "image/png")
+    @property files: Pring.File[] = [new Pring.File("file.jpg", "https://file", "version/1/", "image/png"), new Pring.File("file.jpg", "https://file", "version/1/", "image/png")]
     @property number: number = 9223372036854776000
     @property date: admin.firestore.Timestamp = admin.firestore.Timestamp.fromDate(new Date(100))
     @property geoPoint: admin.firestore.GeoPoint = new admin.firestore.GeoPoint(0, 0)
