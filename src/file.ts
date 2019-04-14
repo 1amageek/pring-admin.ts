@@ -44,10 +44,8 @@ export class File implements ValueProtocol {
             "name": this.name || "",
             "url": this.url,
             "path": this.path,
-            "mimeType": this.mimeType || ""
-        }
-        if (this.additionalData) {
-            value["additionalData"] = this.additionalData
+            "mimeType": this.mimeType || "",
+            "additionalData": this.additionalData || []
         }
         return value
     }
