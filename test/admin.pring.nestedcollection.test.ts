@@ -3,10 +3,8 @@ import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
 
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
 
@@ -39,8 +37,8 @@ describe("SubCollection pack", () => {
         await child.save()
     });
 
-    describe("NestedCollection", async () => {
-        describe("Get NestedCollection's document", async () => {
+    describe("NestedCollection", () => {
+        describe("Get NestedCollection's document", () => {
 
             test("Root document", async () => {
                 try {
@@ -141,7 +139,7 @@ describe("SubCollection pack", () => {
             })
         })
 
-        describe("DataSource", async () => {
+        describe("DataSource", () => {
             test("doc 1 reference", async () => {
                 try {
                     const doc = await Document.get(doc0_nested_id) as Document
@@ -164,8 +162,8 @@ describe("SubCollection pack", () => {
         })
     })
 
-    describe("NestedCollection", async () => {
-        describe("Get NestedCollection's document", async () => {
+    describe("NestedCollection", () => {
+        describe("Get NestedCollection's document", () => {
             test("Root document", async () => {
                 try {
                     const doc = await Document.get(doc0_nested_id) as Document

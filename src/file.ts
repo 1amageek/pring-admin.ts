@@ -40,12 +40,14 @@ export class File implements ValueProtocol {
     }
 
     public value(): any {
-        const value: FileData = {
+        const value: any = {
             "name": this.name || "",
             "url": this.url,
             "path": this.path,
-            "mimeType": this.mimeType || "",
-            "additionalData": this.additionalData || []
+            "mimeType": this.mimeType || ""
+        }
+        if (this.additionalData !== undefined) {
+            value.additionalData = this.additionalData
         }
         return value
     }

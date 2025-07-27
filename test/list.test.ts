@@ -4,10 +4,8 @@ import * as Pring from "../src/index"
 
 const property = Pring.property
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
  
@@ -23,7 +21,7 @@ class Doc0 extends Pring.Base {
 
 describe("List Test", () => {
 
-    describe("Test", async () => {
+    describe("Test", () => {
 
         test("Append", async () => {
             const doc0 = new Doc0()

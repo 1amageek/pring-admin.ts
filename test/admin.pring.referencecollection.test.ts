@@ -3,10 +3,8 @@ import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
 
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
 
@@ -40,9 +38,9 @@ describe("SubCollection pack", () => {
         await doc1.update()
     });
 
-    describe("ReferenceCollection", async () => {
+    describe("ReferenceCollection", () => {
 
-        describe("Get ReferenceCollection's document", async () => {
+        describe("Get ReferenceCollection's document", () => {
 
             test("Root document", async () => {
                 try {
@@ -112,7 +110,7 @@ describe("SubCollection pack", () => {
             })
         })
     
-        describe("Document get reference", async () => {
+        describe("Document get reference", () => {
             test("doc 1 reference", async () => {
                 try {
                     const docs = await new Document(doc0_id).referenceCollection.get(Document)
@@ -180,7 +178,7 @@ describe("SubCollection pack", () => {
             })
         })
 
-        describe("Initilizeed Document get reference", async () => {
+        describe("Initilizeed Document get reference", () => {
             test("doc 1 reference", async () => {
                 try {
                     const docs = await new Document(doc0_id).referenceCollection.get(Document)
@@ -239,7 +237,7 @@ describe("SubCollection pack", () => {
             })
         })
 
-        describe("Document get reference", async () => {
+        describe("Document get reference", () => {
             test("doc 1 reference", async () => {
                 try {
                     const doc = await Document.get(doc0_id) as Document
@@ -301,7 +299,7 @@ describe("SubCollection pack", () => {
             })
         })
 
-        describe("DataSource", async () => {
+        describe("DataSource", () => {
             test("doc 1 reference", async () => {
                 try {
                     const doc = await Document.get(doc0_id) as Document

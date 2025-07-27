@@ -21,7 +21,7 @@ export type Query = firebase.firestore.Query
 export type QuerySnapshot = firebase.firestore.QuerySnapshot
 export type WriteBatch = firebase.firestore.WriteBatch
 export type SetOptions = FirebaseFirestore.SetOptions
-export type UpdateData = FirebaseFirestore.UpdateData
+export type UpdateData<T = DocumentData> = FirebaseFirestore.UpdateData<T>
 export type FieldPath = firebase.firestore.FieldPath
 export type Transaction = firebase.firestore.Transaction
 export type Timestamp = firebase.firestore.Timestamp
@@ -146,7 +146,7 @@ export class Base implements Document {
     }
 
     public static getModelName(): string {
-        return this.toString().split('(' || /s+/)[0].split(' ' || /s+/)[1].toLowerCase()
+        return this.name.toLowerCase()
     }
 
     public static getPath(): string {
@@ -293,7 +293,7 @@ export class Base implements Document {
     }
 
     public getModelName(): string {
-        return this.constructor.toString().split('(' || /s+/)[0].split(' ' || /s+/)[1].toLowerCase()
+        return this.constructor.name.toLowerCase()
     }
 
     public getPath(): string {

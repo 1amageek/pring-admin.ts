@@ -3,10 +3,8 @@ process.env.NODE_ENV = 'test';
 import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
 
@@ -44,7 +42,7 @@ describe("Document property", () => {
         doc = await OptionalDocument.get(document.id) as OptionalDocument
     });
 
-    describe("properties", async () => {
+    describe("properties", () => {
         test("value", () => {
             const keys = Object.keys(doc.value())
             expect(keys.includes("createdAt")).toEqual(true)
@@ -120,14 +118,14 @@ describe("Document property", () => {
         })
     })
 
-    describe("Documents that do not exist", async () => {
+    describe("Documents that do not exist", () => {
         test("not exist", async () => {
             const doc = await OptionalDocument.get("not")
             expect(doc).toBeUndefined()
         })
     })
 
-    describe("delete document", async () => {
+    describe("delete document", () => {
         test("delete", async () => {
             try {
                 const document_id = doc.id

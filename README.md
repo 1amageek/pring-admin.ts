@@ -198,12 +198,46 @@ export default class Home extends Vue {
 
 ## Test
 
-https://facebook.github.io/jest/
+### Setup
+
+You have three options for running tests:
+
+1. **Using Firebase Emulator (Recommended):**
+   ```bash
+   # Install Firebase CLI
+   npm install -g firebase-tools
+   
+   # Start Firestore Emulator
+   firebase emulators:start --only firestore
+   
+   # In another terminal, run tests
+   export FIRESTORE_EMULATOR_HOST=localhost:8080
+   jest
+   ```
+
+2. **Using a Firebase service account key:**
+   - Go to Firebase Console → Project Settings → Service Accounts
+   - Click "Generate new private key"
+   - Save the downloaded JSON file as `key.json` in the project root
+
+3. **Using environment variable:**
+   ```bash
+   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
+   ```
+
+### Running Tests
 
 ```shell
 npm install -g jest 
 ```
 
 ```shell
+# With emulator (recommended)
+export FIRESTORE_EMULATOR_HOST=localhost:8080
+jest
+
+# With credentials
 jest
 ```
+
+**Note:** If no credentials are provided, tests will automatically attempt to use the Firestore Emulator at `localhost:8080`.

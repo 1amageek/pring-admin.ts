@@ -2,10 +2,8 @@ process.env.NODE_ENV = 'test';
 import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
 
@@ -32,7 +30,7 @@ export class Doc3 extends Pring.Base {
 
 
 describe("Nest", () => {
-    describe("Path", async () => {
+    describe("Path", () => {
         test("Doc0", () => {
             const doc0: Doc0 = new Doc0()
             const doc1: Doc1 = doc0.nest.doc("doc1", Doc1)
@@ -50,7 +48,7 @@ describe("Nest", () => {
         })
     })
 
-    describe("Get", async () => {
+    describe("Get", () => {
 
         const doc0: Doc0 = new Doc0()
         const doc1: Doc1 = new Doc1()

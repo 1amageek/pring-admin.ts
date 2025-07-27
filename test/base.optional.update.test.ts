@@ -3,10 +3,8 @@ import * as admin from 'firebase-admin'
 import * as Pring from "../src/index"
 
 
-var key = require("../key.json")
-const app = admin.initializeApp({
-    credential: admin.credential.cert(key)
-})
+import { initializeTestApp } from './test-helper'
+const app = initializeTestApp()
 
 Pring.initialize(app.firestore())
 
@@ -15,7 +13,7 @@ import { FieldValue } from '@google-cloud/firestore';
 
 describe("OptionalDocument property", () => {
 
-    describe("properties before get", async () => {
+    describe("properties before get", () => {
 
         test("String type", async () => {
             const document = new OptionalDocument()
@@ -118,7 +116,7 @@ describe("OptionalDocument property", () => {
         }, 10000)
     })
 
-    describe("properties after get", async () => {
+    describe("properties after get", () => {
 
         test("String type", async () => {
             const document = new OptionalDocument()
